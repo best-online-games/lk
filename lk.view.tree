@@ -3,4 +3,5 @@ $bog_lk $mol_page
 	plugins /
 		<= Theme $bog_theme_auto
 	head /
-		<= Lights $mol_lights_toggle
+		<= Lights $bog_theme_toggle
+			theme_auto <= Theme
