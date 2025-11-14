@@ -5,3 +5,83 @@ $bog_lk $mol_page
 	head /
 		<= Lights $bog_theme_toggle
 			theme_auto <= Theme
+	body /
+		<= Hero $mol_row
+			sub /
+				<= Avatar $bog_lk_avatar
+				<= Hero_info $mol_list
+					rows /
+						<= Display_name $mol_text
+							text <= display_name_text \
+						<= Username_preview $mol_text
+							text <= username_preview_text \
+						<= Peer_id $mol_labeler
+							Label <= Peer_label $mol_text
+								text @ \User ID
+							Content <= Peer_value $mol_text
+								text <= peer_id \
+						<= Bio_preview $mol_text
+							text <= bio_preview_text \
+		<= Form_title $mol_text
+			text @ \Tell people about yourself
+		<= Profile_form $mol_form
+			body /
+				<= Basics_heading $mol_text
+					text @ \Basic information
+				<= Basics_group $mol_form_group sub /
+					<= Full_name_field $mol_form_field
+						name @ \Full name
+						Content <= Full_name_input $mol_string
+							value? <=> full_name? \
+							hint @ \Full name placeholder
+					<= Nickname_field $mol_form_field
+						name @ \Username
+						Content <= Nickname_input $mol_string
+							value? <=> nickname? \
+							hint @ \Username placeholder
+					<= Bio_field $mol_form_field
+						name @ \Bio
+						Content <= Bio_input $mol_textarea
+							value? <=> bio? \
+							hint @ \Bio placeholder
+				<= Location_heading $mol_text
+					text @ \Location
+				<= Location_group $mol_form_group sub /
+					<= City_field $mol_form_field
+						name @ \City
+						Content <= City_input $mol_string
+							value? <=> city? \
+							hint @ \City placeholder
+					<= Country_field $mol_form_field
+						name @ \Country
+						Content <= Country_input $mol_string
+							value? <=> country? \
+							hint @ \Country placeholder
+				<= Contacts_heading $mol_text
+					text @ \Contacts
+				<= Contacts_group $mol_form_group sub /
+					<= Email_field $mol_form_field
+						name @ \Email
+						Content <= Email_input $mol_string
+							value? <=> email? \
+							hint @ \Email placeholder
+					<= Website_field $mol_form_field
+						name @ \Website
+						Content <= Website_input $mol_string
+							value? <=> website? \
+							hint @ \Website placeholder
+					<= Telegram_field $mol_form_field
+						name @ \Telegram
+						Content <= Telegram_input $mol_string
+							value? <=> telegram? \
+							hint @ \Telegram placeholder
+					<= Github_field $mol_form_field
+						name @ \GitHub
+						Content <= Github_input $mol_string
+							value? <=> github? \
+							hint @ \GitHub placeholder
+					<= Twitter_field $mol_form_field
+						name @ \Twitter
+						Content <= Twitter_input $mol_string
+							value? <=> twitter? \
+							hint @ \Twitter placeholder

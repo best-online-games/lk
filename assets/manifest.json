@@ -1,0 +1,15 @@
+{
+	"short_name": "Pazzle",
+	"name": "Pazzle",
+	"icons": [
+		{
+			"src": "/ds/assets/favicon.svg",
+			"type": "image/svg+xml",
+			"sizes": "256x256"
+		}
+	],
+	"start_url": "../",
+	"background_color": "#000000",
+	"theme_color": "#000000",
+	"display": "standalone"
+}
