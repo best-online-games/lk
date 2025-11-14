@@ -5,10 +5,6 @@ namespace $.$$ {
 	})
 
 	export class $bog_lk extends $.$bog_lk {
-		@$mol_mem
-		profile() {
-			return $hyoo_crus_glob.home().hall_by($bog_lk_person, {})
-		}
+		
 	}
 }
-

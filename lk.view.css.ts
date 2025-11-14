@@ -1,4 +1,4 @@
 namespace $.$$ {
-	$mol_style_define($bog_lk_profile, {
+	$mol_style_define($bog_lk, {
 	})
 }

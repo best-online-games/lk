@@ -4,8 +4,3 @@ $bog_lk $mol_page
 		<= Theme $bog_theme_auto
 	head /
 		<= Lights $mol_lights_toggle
-	body /
-		<= Content
-	Content <= Profile
-	Profile $bog_lk_profile
-	Yard $hyoo_sync_client
