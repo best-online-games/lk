@@ -8297,7 +8297,7 @@ declare namespace $ {
 declare namespace $.$$ {
     class $bog_lk extends $.$bog_lk {
         profile(): $bog_lk_profile | null;
-        protected profile_text(field: (profile: $bog_lk_profile) => $hyoo_crus_text | null, next?: string): string;
+        protected profile_text(ensure: (profile: $bog_lk_profile) => $hyoo_crus_text | null, next?: string): string;
         full_name(next?: string): string;
         nickname(next?: string): string;
         bio(next?: string): string;

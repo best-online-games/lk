@@ -18088,42 +18088,42 @@ var $;
             profile() {
                 return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, {});
             }
-            profile_text(field, next) {
+            profile_text(ensure, next) {
                 const profile = this.profile();
-                const atom = profile ? field(profile) : null;
+                const atom = profile ? ensure(profile) : null;
                 if (!atom)
                     return '';
                 return atom.text(next);
             }
             full_name(next) {
-                return this.profile_text(profile => profile.FullName(), next);
+                return this.profile_text(profile => profile.FullName(null), next);
             }
             nickname(next) {
-                return this.profile_text(profile => profile.Nickname(), next);
+                return this.profile_text(profile => profile.Nickname(null), next);
             }
             bio(next) {
-                return this.profile_text(profile => profile.Bio(), next);
+                return this.profile_text(profile => profile.Bio(null), next);
             }
             city(next) {
-                return this.profile_text(profile => profile.City(), next);
+                return this.profile_text(profile => profile.City(null), next);
             }
             country(next) {
-                return this.profile_text(profile => profile.Country(), next);
+                return this.profile_text(profile => profile.Country(null), next);
             }
             website(next) {
-                return this.profile_text(profile => profile.Website(), next);
+                return this.profile_text(profile => profile.Website(null), next);
             }
             email(next) {
-                return this.profile_text(profile => profile.Email(), next);
+                return this.profile_text(profile => profile.Email(null), next);
             }
             telegram(next) {
-                return this.profile_text(profile => profile.Telegram(), next);
+                return this.profile_text(profile => profile.Telegram(null), next);
             }
             github(next) {
-                return this.profile_text(profile => profile.Github(), next);
+                return this.profile_text(profile => profile.Github(null), next);
             }
             twitter(next) {
-                return this.profile_text(profile => profile.Twitter(), next);
+                return this.profile_text(profile => profile.Twitter(null), next);
             }
             peer_id() {
                 return this.$.$hyoo_crus_glob.home().land().auth().peer();
