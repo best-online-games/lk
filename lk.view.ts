@@ -11,11 +11,11 @@ namespace $.$$ {
 		}
 
 		protected profile_text(
-			field: (profile: $bog_lk_profile) => $hyoo_crus_text | null,
+			ensure: (profile: $bog_lk_profile) => $hyoo_crus_text | null,
 			next?: string,
 		) {
 			const profile = this.profile()
-			const atom = profile ? field(profile) : null
+			const atom = profile ? ensure(profile) : null
 			if (!atom) return ''
 
 			return atom.text(next)
@@ -23,52 +23,52 @@ namespace $.$$ {
 
 		@$mol_mem
 		full_name(next?: string) {
-			return this.profile_text(profile => profile.FullName(), next)
+			return this.profile_text(profile => profile.FullName(null), next)
 		}
 
 		@$mol_mem
 		nickname(next?: string) {
-			return this.profile_text(profile => profile.Nickname(), next)
+			return this.profile_text(profile => profile.Nickname(null), next)
 		}
 
 		@$mol_mem
 		bio(next?: string) {
-			return this.profile_text(profile => profile.Bio(), next)
+			return this.profile_text(profile => profile.Bio(null), next)
 		}
 
 		@$mol_mem
 		city(next?: string) {
-			return this.profile_text(profile => profile.City(), next)
+			return this.profile_text(profile => profile.City(null), next)
 		}
 
 		@$mol_mem
 		country(next?: string) {
-			return this.profile_text(profile => profile.Country(), next)
+			return this.profile_text(profile => profile.Country(null), next)
 		}
 
 		@$mol_mem
 		website(next?: string) {
-			return this.profile_text(profile => profile.Website(), next)
+			return this.profile_text(profile => profile.Website(null), next)
 		}
 
 		@$mol_mem
 		email(next?: string) {
-			return this.profile_text(profile => profile.Email(), next)
+			return this.profile_text(profile => profile.Email(null), next)
 		}
 
 		@$mol_mem
 		telegram(next?: string) {
-			return this.profile_text(profile => profile.Telegram(), next)
+			return this.profile_text(profile => profile.Telegram(null), next)
 		}
 
 		@$mol_mem
 		github(next?: string) {
-			return this.profile_text(profile => profile.Github(), next)
+			return this.profile_text(profile => profile.Github(null), next)
 		}
 
 		@$mol_mem
 		twitter(next?: string) {
-			return this.profile_text(profile => profile.Twitter(), next)
+			return this.profile_text(profile => profile.Twitter(null), next)
 		}
 
 		@$mol_mem
