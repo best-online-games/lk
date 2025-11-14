@@ -1,0 +1,11 @@
+$bog_lk_profile $mol_page
+	title @ \Profile
+	body /
+		<= Info_peer
+		<= Avatar
+		<= Name_field
+		<= Email_field
+		<= Bio_field
+		<= Photos_section
+		<= Links_section
+
