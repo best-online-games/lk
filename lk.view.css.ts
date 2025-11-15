@@ -13,6 +13,15 @@ namespace $.$$ {
 			alignItems: 'center',
 		},
 
+		Hero_meta: {
+			gap: $mol_gap.block,
+			alignItems: 'flex-start',
+			justifyContent: 'space-between',
+			flex: {
+				grow: 1,
+			},
+		},
+
 		Hero_info: {
 			gap: $mol_gap.text,
 		},
@@ -31,6 +40,10 @@ namespace $.$$ {
 		Bio_preview: {
 			color: $mol_theme.text,
 			whiteSpace: 'pre-wrap',
+		},
+
+		Share_button: {
+			alignSelf: 'flex-start',
 		},
 
 		Form_title: {

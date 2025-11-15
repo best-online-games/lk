@@ -2,7 +2,7 @@ namespace $.$$ {
 	// Avatar upload button bound to CRUS profile Photos collection.
 	export class $bog_lk_avatar extends $.$bog_lk_avatar {
 		@$mol_mem
-		profile() {
+		entity() {
 			return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, {})
 		}
 
@@ -16,7 +16,7 @@ namespace $.$$ {
 
 		@$mol_mem
 		private_photo() {
-			return this.profile()?.Photos()?.remote_list()[0] ?? null
+			return this.entity()?.Photos()?.remote_list()[0] ?? null
 		}
 
 		@$mol_mem
@@ -62,7 +62,8 @@ namespace $.$$ {
 
 		@$mol_action
 		clear() {
-			const profile = this.profile()
+			if (!this.enabled()) return
+			const profile = this.entity()
 			const photo = this.private_photo()
 			if (!profile || !photo) return
 			profile.Photos(null)!.has(photo.ref(), false)
@@ -70,9 +71,10 @@ namespace $.$$ {
 
 		@$mol_action
 		files(next?: readonly File[]) {
+			if (!this.enabled()) return []
 			if (!next?.length) return []
 
-			const profile = this.profile()!
+			const profile = this.entity()!
 			const list = profile.Photos(null)!
 			const current = profile.Photos()?.remote_list() ?? []
 			for (const photo of current) list.has(photo.ref(), false)

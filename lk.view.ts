@@ -6,8 +6,27 @@ namespace $.$$ {
 
 	export class $bog_lk extends $.$bog_lk {
 		@$mol_mem
-		profile() {
+		share_ref() {
+			return this.$.$mol_state_arg.value('profile')
+		}
+
+		@$mol_mem
+		can_edit() {
+			return !this.share_ref()
+		}
+
+		@$mol_mem
+		own_profile() {
 			return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, {})
+		}
+
+		@$mol_mem
+		profile() {
+			const ref = this.share_ref()
+			if (ref) {
+				return this.$.$hyoo_crus_glob.Node($hyoo_crus_ref(ref), $bog_lk_profile)
+			}
+			return this.own_profile()
 		}
 
 		protected profile_text(
@@ -18,7 +37,12 @@ namespace $.$$ {
 			const atom = profile ? ensure(profile) : null
 			if (!atom) return ''
 
-			return atom.text(next)
+			if (next !== undefined) {
+				if (!this.can_edit()) return atom.text()
+				return atom.text(next)
+			}
+
+			return atom.text()
 		}
 
 		@$mol_mem
@@ -73,7 +97,7 @@ namespace $.$$ {
 
 		@$mol_mem
 		peer_id() {
-			return this.$.$hyoo_crus_glob.home().land().auth().peer()
+			return this.profile()?.ref().description ?? this.$.$hyoo_crus_glob.home().land().auth().peer()
 		}
 
 		@$mol_mem
@@ -92,6 +116,27 @@ namespace $.$$ {
 			const bio = this.bio().trim()
 			if (bio.length <= 180) return bio
 			return `${bio.slice(0, 177)}...`
+		}
+
+		@$mol_mem
+		share_link() {
+			if (!this.can_edit()) return ''
+			const ref = this.own_profile()?.ref().description
+			if (!ref) return ''
+			this.share_grant()
+			return this.$.$mol_state_arg.make_link({ profile: ref })
+		}
+
+		@$mol_action
+		share_grant() {
+			const land = this.own_profile()?.land()
+			if (!land) return
+			land.give(null, $hyoo_crus_rank_read)
+		}
+
+		Share_button() {
+			if (!this.can_edit()) return null as any
+			return super.Share_button()
 		}
 	}
 }

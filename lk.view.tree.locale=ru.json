@@ -24,5 +24,6 @@
 	"$bog_lk_Github_field_name": "GitHub",
 	"$bog_lk_Github_input_hint": "github.com/username",
 	"$bog_lk_Twitter_field_name": "Twitter",
-	"$bog_lk_Twitter_input_hint": "@username или ссылка"
+	"$bog_lk_Twitter_input_hint": "@username или ссылка",
+	"$bog_lk_Share_button_title": "Поделиться ссылкой"
 }
