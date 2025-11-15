@@ -15,5 +15,6 @@ namespace $ {
 		Github: $hyoo_crus_text,
 		Twitter: $hyoo_crus_text,
 		Photos: $hyoo_crus_list_ref_to(() => $hyoo_crus_atom_bin),
+		PhotosBase64: $hyoo_crus_list_ref_to(() => $hyoo_crus_atom_str),
 	}) {}
 }

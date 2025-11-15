@@ -19,7 +19,7 @@ namespace $.$$ {
 
 		@$mol_mem
 		own_profile() {
-			return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, $bog_lk_profile_preset)
+			return this.available_profile()
 		}
 
 		@$mol_mem
@@ -123,11 +123,19 @@ namespace $.$$ {
 		@$mol_mem
 		share_profile() {
 			if (!this.can_edit()) return null
-			const profile = this.share_grant()
+			const profile = this.available_profile()
 			this.$.$mol_dom_context.console?.info?.('[LK Share]', 'share_profile', {
 				ref: profile?.ref().description ?? null,
 			})
 			return profile
+		}
+
+		@$mol_mem
+		available_profile() {
+			const profile = this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, $bog_lk_profile_preset)
+			if (!profile) return null
+			if (!this.can_edit()) return profile
+			return this.ensure_public_profile(profile)
 		}
 
 		@$mol_mem
@@ -145,28 +153,26 @@ namespace $.$$ {
 		}
 
 		@$mol_action
-		ensure_public_profile() {
-				const profile = this.own_profile()
-				if (!profile) return null
-				const land = profile.land()
-				if (!land.encrypted()) {
-					this.$.$mol_dom_context.console?.info?.('[LK Share]', 'profile not encrypted', {
-						ref: profile.ref().description,
-					})
-					return profile
-				}
+		ensure_public_profile(profile: $bog_lk_profile) {
+			const land = profile.land()
+			if (!land.encrypted()) {
+				this.$.$mol_dom_context.console?.info?.('[LK Share]', 'profile not encrypted', {
+					ref: profile.ref().description,
+				})
+				return profile
+			}
 
 			const hall = this.$.$hyoo_crus_glob.home().Hall(null)
 			if (!hall) return profile
 
-				const public_land = this.$.$hyoo_crus_glob.land_grab($bog_lk_profile_preset)
-				const public_profile = public_land.Data($bog_lk_profile)
-				this.$.$mol_dom_context.console?.info?.('[LK Share]', 'migrate profile', {
-					from: profile.ref().description,
-					to: public_profile.ref().description,
-				})
-				this.copy_profile_data(profile, public_profile)
-				hall.remote(public_profile)
+			const public_land = this.$.$hyoo_crus_glob.land_grab($bog_lk_profile_preset)
+			const public_profile = public_land.Data($bog_lk_profile)
+			this.$.$mol_dom_context.console?.info?.('[LK Share]', 'migrate profile', {
+				from: profile.ref().description,
+				to: public_profile.ref().description,
+			})
+			this.copy_profile_data(profile, public_profile)
+			hall.remote(public_profile)
 
 			return public_profile
 		}
@@ -190,40 +196,56 @@ namespace $.$$ {
 		}
 
 		protected copy_profile_photos(source: $bog_lk_profile, target: $bog_lk_profile) {
-			const destination = target.Photos(null)
-			if (!destination) return
-			const existing = destination.remote_list()
-			for (const photo of existing) destination.has(photo.ref(), false)
+			const base64_dest = target.PhotosBase64(null)!
 
-			const originals = source.Photos()?.remote_list() ?? []
-			for (const photo of originals) {
+			for (const existing of target.PhotosBase64()?.remote_list() ?? []) {
+				base64_dest.has(existing.ref(), false)
+			}
+			const legacy_dest = target.Photos(null)
+			for (const legacy of target.Photos()?.remote_list() ?? []) {
+				legacy_dest?.has(legacy.ref(), false)
+			}
+
+			const logger = this.$.$mol_dom_context.console
+			const base64_sources = source.PhotosBase64()?.remote_list() ?? []
+			const legacy_sources = source.Photos()?.remote_list() ?? []
+
+			if (base64_sources.length) {
+				for (const photo of base64_sources) {
+					const text = photo.val() ?? ''
+					if (!text) continue
+					logger?.info?.('[LK Share]', 'Copy profile photo (base64)', {
+						source: photo.ref().description,
+						length: text.length,
+					})
+					const node = base64_dest.local_make()
+					node.val(text)
+				}
+				return
+			}
+
+			for (const photo of legacy_sources) {
 				const data = photo.val()
-				const logger = this.$.$mol_dom_context.console
 				if (!data) {
 					logger?.info?.('[LK Share]', 'Empty photo payload', {
 						source: photo.ref().description,
 					})
 					continue
 				}
-				logger?.info?.('[LK Share]', 'Copy profile photo', {
+				const base64 = this.bytes_to_base64(data)
+				logger?.info?.('[LK Share]', 'Copy profile photo (legacy)', {
 					source: photo.ref().description,
 					bytes: data.byteLength,
 				})
-				const bin = destination.local_make()
-				logger?.info?.('[LK Share]', 'Create public photo', {
-					target: bin.ref().description,
-				})
-				bin.val(new Uint8Array(data))
+				const node = base64_dest.local_make()
+				node.val(base64)
 			}
 		}
 
 		@$mol_action
 		share_grant() {
-			let profile = this.own_profile()
+			const profile = this.own_profile()
 			if (!profile) return null
-			if (profile.land().encrypted()) {
-				profile = this.ensure_public_profile() ?? profile
-			}
 			profile.land().give(null, $hyoo_crus_rank_read)
 			return profile
 		}
@@ -281,6 +303,16 @@ namespace $.$$ {
 				this.share_feedback_text('')
 				this.share_feedback_timer = null
 			})
+		}
+
+		protected bytes_to_base64(buffer: Uint8Array) {
+			const chunk = 0x8000
+			let binary = ''
+			for (let i = 0; i < buffer.length; i += chunk) {
+				const slice = buffer.subarray(i, i + chunk)
+				binary += String.fromCharCode(...slice)
+			}
+			return this.$.$mol_dom_context.btoa(binary)
 		}
 
 		Avatar() {
