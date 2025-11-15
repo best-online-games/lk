@@ -28,9 +28,23 @@ $bog_lk $mol_page
 										text <= peer_id \
 								<= Bio_preview $mol_text
 									text <= bio_preview_text \
-						<= Share_button $mol_button_copy
-							title @ \Share profile
-							text <= share_link \
+						<= Share_panel $mol_list
+							rows /
+								<= Share_title $mol_text
+									text @ \Поделиться:
+								<= Share_row $mol_row
+									sub /
+										<= Share_field $mol_string
+											value <= share_link \
+											hint @ \Ссылка на профиль
+										<= Share_copy $mol_button_minor
+											title @ \Скопировать ссылку
+											click? => share_copy_click? \
+											sub /
+												<= Share_copy_text $mol_text
+													text @ \Скопировать
+								<= Share_feedback $mol_text
+									text <= share_feedback_text \
 		<= Form_title $mol_text
 			text @ \Tell people about yourself
 		<= Profile_form $mol_form

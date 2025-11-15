@@ -5,6 +5,8 @@ namespace $.$$ {
 	})
 
 	export class $bog_lk extends $.$bog_lk {
+		private share_feedback_timer: $mol_after_timeout | null = null
+
 		@$mol_mem
 		share_ref() {
 			return this.$.$mol_state_arg.value('profile')
@@ -119,12 +121,22 @@ namespace $.$$ {
 		}
 
 		@$mol_mem
+		share_profile() {
+			if (!this.can_edit()) return null
+			return this.share_grant()
+		}
+
+		@$mol_mem
 		share_link() {
 			if (!this.can_edit()) return ''
-			const ref = this.own_profile()?.ref().description
+			const ref = this.share_profile()?.ref().description
 			if (!ref) return ''
-			this.share_grant()
 			return this.$.$mol_state_arg.make_link({ profile: ref })
+		}
+
+		@$mol_mem
+		share_feedback_text(next?: string) {
+			return next ?? ''
 		}
 
 		@$mol_action
@@ -173,8 +185,18 @@ namespace $.$$ {
 			const originals = source.Photos()?.remote_list() ?? []
 			for (const photo of originals) {
 				const data = photo.val()
-				if (!data) continue
-				const bin = destination.remote_make({})!
+				const logger = this.$.$mol_dom_context.console
+				if (!data) {
+					logger?.info?.('[LK Share]', 'Empty photo payload', {
+						source: photo.ref().description,
+					})
+					continue
+				}
+				logger?.info?.('[LK Share]', 'Copy profile photo', {
+					source: photo.ref().description,
+					bytes: data.byteLength,
+				})
+				const bin = destination.local_make()
 				bin.val(new Uint8Array(data))
 			}
 		}
@@ -182,16 +204,67 @@ namespace $.$$ {
 		@$mol_action
 		share_grant() {
 			let profile = this.own_profile()
-			if (!profile) return
+			if (!profile) return null
 			if (profile.land().encrypted()) {
 				profile = this.ensure_public_profile() ?? profile
 			}
 			profile.land().give(null, $hyoo_crus_rank_read)
+			return profile
 		}
 
-		Share_button() {
+		Profile_form() {
+			const form = super.Profile_form()
+			form.foot = () => [] as readonly $mol_view[]
+			return form
+		}
+
+		Share_panel() {
 			if (!this.can_edit()) return null as any
-			return super.Share_button()
+			return super.Share_panel()
+		}
+
+		Share_copy() {
+			const button = super.Share_copy()
+			button.event_click = event => this.share_copy_click(event)
+			return button
+		}
+
+		share_copy_click(event?: Event) {
+			event?.preventDefault()
+			void this.share_copy_flow()
+		}
+
+		protected async share_copy_flow() {
+			if (!this.can_edit()) return
+
+			const link = this.share_link()
+			if (!link) return
+
+			const copied = await this.share_copy_to_clipboard(link)
+			this.share_notify(copied ? 'Ссылка скопирована' : 'Скопируйте ссылку вручную')
+		}
+
+		protected async share_copy_to_clipboard(link: string) {
+			const clipboard = this.$.$mol_dom_context.navigator?.clipboard
+			if (clipboard?.writeText) {
+				try {
+					await clipboard.writeText(link)
+					return true
+				} catch (error) {
+					this.$.$mol_dom_context.console?.warn?.('[LK Share]', 'Clipboard write failed', error)
+				}
+			}
+			this.$.$mol_dom_context.prompt?.('Скопируйте ссылку', link)
+			return false
+		}
+
+		protected share_notify(message: string) {
+			this.share_feedback_text(message)
+			this.share_feedback_timer?.destructor()
+			this.share_feedback_timer = new this.$.$mol_after_timeout(3000, () => {
+				this.share_feedback_text('')
+				this.share_feedback_timer = null
+			})
 		}
 	}
 }

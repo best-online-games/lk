@@ -42,10 +42,6 @@ namespace $.$$ {
 			whiteSpace: 'pre-wrap',
 		},
 
-		Share_button: {
-			alignSelf: 'flex-start',
-		},
-
 		Form_title: {
 			margin: { bottom: $mol_gap.block },
 			color: $mol_theme.text,
@@ -76,5 +72,8 @@ namespace $.$$ {
 			font: { weight: 600 },
 			margin: { top: $mol_gap.block },
 		},
+		Share_field :{
+			width:'33rem'
+		}
 	})
 }

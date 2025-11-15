@@ -1,9 +1,23 @@
 namespace $.$$ {
 	// Avatar upload button bound to CRUS profile Photos collection.
 	export class $bog_lk_avatar extends $.$bog_lk_avatar {
+		protected avatar_log(event: string, detail: Record<string, unknown> = {}) {
+			this.$.$mol_dom_context.console?.info?.('[LK Avatar]', event, detail)
+		}
+
 		@$mol_mem
-		entity() {
-			return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, $bog_lk_profile_preset)
+		entity(next?: $bog_lk_profile | null) {
+			if (next !== undefined) {
+				this.avatar_log('Entity override', {
+					ref: next?.ref().description ?? null,
+				})
+				return next
+			}
+			const fallback = this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, $bog_lk_profile_preset)
+			this.avatar_log('Entity fallback', {
+				ref: fallback?.ref().description ?? null,
+			})
+			return fallback
 		}
 
 		accept() {
@@ -16,12 +30,33 @@ namespace $.$$ {
 
 		@$mol_mem
 		private_photo() {
-			return this.entity()?.Photos()?.remote_list()[0] ?? null
+			const entity = this.entity()
+			if (!entity) {
+				this.avatar_log('No entity for avatar')
+				return null
+			}
+			const photos = entity.Photos()?.remote_list() ?? []
+			this.avatar_log('Photos fetched', {
+				profile: entity.ref().description,
+				count: photos.length,
+			})
+			return photos[0] ?? null
 		}
 
 		@$mol_mem
 		image_data() {
-			return this.private_photo()?.val() ?? null
+			const photo = this.private_photo()
+			if (!photo) {
+				this.avatar_log('Photo record missing')
+				return null
+			}
+			const data = photo.val()
+			this.avatar_log('Photo data loaded', {
+				ref: photo.ref().description,
+				bytes: data?.byteLength ?? 0,
+				has_data: Boolean(data),
+			})
+			return data ?? null
 		}
 
 		protected to_data_uri(buffer: Uint8Array) {
@@ -37,7 +72,13 @@ namespace $.$$ {
 		@$mol_mem
 		image_uri() {
 			const data = this.image_data()
-			if (!data) return ''
+			if (!data) {
+				this.avatar_log('No binary data to render')
+				return ''
+			}
+			this.avatar_log('Image URI rendered', {
+				bytes: data.byteLength,
+			})
 			return this.to_data_uri(data)
 		}
 
