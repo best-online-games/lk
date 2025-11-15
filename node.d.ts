@@ -8416,6 +8416,7 @@ declare namespace $.$$ {
         protected share_copy_flow(): Promise<void>;
         protected share_copy_to_clipboard(link: string): Promise<boolean>;
         protected share_notify(message: string): void;
+        Avatar(): $.$bog_lk_avatar;
     }
 }
 
