@@ -17,7 +17,7 @@ namespace $.$$ {
 
 		@$mol_mem
 		own_profile() {
-			return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, {})
+			return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, $bog_lk_profile_preset)
 		}
 
 		@$mol_mem
@@ -128,10 +128,65 @@ namespace $.$$ {
 		}
 
 		@$mol_action
+		ensure_public_profile() {
+			const profile = this.own_profile()
+			if (!profile) return null
+			const land = profile.land()
+			if (!land.encrypted()) return profile
+
+			const hall = this.$.$hyoo_crus_glob.home().Hall(null)
+			if (!hall) return profile
+
+			const public_land = this.$.$hyoo_crus_glob.land_grab($bog_lk_profile_preset)
+			const public_profile = public_land.Data($bog_lk_profile)
+
+			this.copy_profile_data(profile, public_profile)
+			hall.remote(public_profile)
+
+			return public_profile
+		}
+
+		protected copy_profile_data(source: $bog_lk_profile, target: $bog_lk_profile) {
+			this.copy_profile_texts(source, target)
+			this.copy_profile_photos(source, target)
+		}
+
+		protected copy_profile_texts(source: $bog_lk_profile, target: $bog_lk_profile) {
+			target.FullName(null)?.text(source.FullName(null)?.text() ?? '')
+			target.Nickname(null)?.text(source.Nickname(null)?.text() ?? '')
+			target.Bio(null)?.text(source.Bio(null)?.text() ?? '')
+			target.City(null)?.text(source.City(null)?.text() ?? '')
+			target.Country(null)?.text(source.Country(null)?.text() ?? '')
+			target.Website(null)?.text(source.Website(null)?.text() ?? '')
+			target.Email(null)?.text(source.Email(null)?.text() ?? '')
+			target.Telegram(null)?.text(source.Telegram(null)?.text() ?? '')
+			target.Github(null)?.text(source.Github(null)?.text() ?? '')
+			target.Twitter(null)?.text(source.Twitter(null)?.text() ?? '')
+		}
+
+		protected copy_profile_photos(source: $bog_lk_profile, target: $bog_lk_profile) {
+			const destination = target.Photos(null)
+			if (!destination) return
+			const existing = destination.remote_list()
+			for (const photo of existing) destination.has(photo.ref(), false)
+
+			const originals = source.Photos()?.remote_list() ?? []
+			for (const photo of originals) {
+				const data = photo.val()
+				if (!data) continue
+				const bin = destination.remote_make({})!
+				bin.val(new Uint8Array(data))
+			}
+		}
+
+		@$mol_action
 		share_grant() {
-			const land = this.own_profile()?.land()
-			if (!land) return
-			land.give(null, $hyoo_crus_rank_read)
+			let profile = this.own_profile()
+			if (!profile) return
+			if (profile.land().encrypted()) {
+				profile = this.ensure_public_profile() ?? profile
+			}
+			profile.land().give(null, $hyoo_crus_rank_read)
 		}
 
 		Share_button() {

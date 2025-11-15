@@ -3,7 +3,7 @@ namespace $.$$ {
 	export class $bog_lk_avatar extends $.$bog_lk_avatar {
 		@$mol_mem
 		entity() {
-			return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, {})
+			return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, $bog_lk_profile_preset)
 		}
 
 		accept() {

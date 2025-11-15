@@ -1,4 +1,8 @@
 namespace $ {
+	export const $bog_lk_profile_preset = {
+		'': $hyoo_crus_rank_read,
+	} as const
+
 	export class $bog_lk_profile extends $hyoo_crus_entity.with({
 		FullName: $hyoo_crus_text,
 		Nickname: $hyoo_crus_text,
