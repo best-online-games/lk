@@ -13788,6 +13788,9 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    $.$bog_lk_profile_preset = {
+        '': $hyoo_crus_rank_read,
+    };
     class $bog_lk_profile extends $hyoo_crus_entity.with({
         FullName: $hyoo_crus_text,
         Nickname: $hyoo_crus_text,
@@ -13918,7 +13921,7 @@ var $;
     (function ($$) {
         class $bog_lk_avatar extends $.$bog_lk_avatar {
             entity() {
-                return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, {});
+                return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, $bog_lk_profile_preset);
             }
             accept() {
                 return 'image/*';
@@ -18117,7 +18120,7 @@ var $;
                 return !this.share_ref();
             }
             own_profile() {
-                return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, {});
+                return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, $bog_lk_profile_preset);
             }
             profile() {
                 const ref = this.share_ref();
@@ -18193,11 +18196,62 @@ var $;
                 this.share_grant();
                 return this.$.$mol_state_arg.make_link({ profile: ref });
             }
-            share_grant() {
-                const land = this.own_profile()?.land();
-                if (!land)
+            ensure_public_profile() {
+                const profile = this.own_profile();
+                if (!profile)
+                    return null;
+                const land = profile.land();
+                if (!land.encrypted())
+                    return profile;
+                const hall = this.$.$hyoo_crus_glob.home().Hall(null);
+                if (!hall)
+                    return profile;
+                const public_land = this.$.$hyoo_crus_glob.land_grab($bog_lk_profile_preset);
+                const public_profile = public_land.Data($bog_lk_profile);
+                this.copy_profile_data(profile, public_profile);
+                hall.remote(public_profile);
+                return public_profile;
+            }
+            copy_profile_data(source, target) {
+                this.copy_profile_texts(source, target);
+                this.copy_profile_photos(source, target);
+            }
+            copy_profile_texts(source, target) {
+                target.FullName(null)?.text(source.FullName(null)?.text() ?? '');
+                target.Nickname(null)?.text(source.Nickname(null)?.text() ?? '');
+                target.Bio(null)?.text(source.Bio(null)?.text() ?? '');
+                target.City(null)?.text(source.City(null)?.text() ?? '');
+                target.Country(null)?.text(source.Country(null)?.text() ?? '');
+                target.Website(null)?.text(source.Website(null)?.text() ?? '');
+                target.Email(null)?.text(source.Email(null)?.text() ?? '');
+                target.Telegram(null)?.text(source.Telegram(null)?.text() ?? '');
+                target.Github(null)?.text(source.Github(null)?.text() ?? '');
+                target.Twitter(null)?.text(source.Twitter(null)?.text() ?? '');
+            }
+            copy_profile_photos(source, target) {
+                const destination = target.Photos(null);
+                if (!destination)
                     return;
-                land.give(null, $hyoo_crus_rank_read);
+                const existing = destination.remote_list();
+                for (const photo of existing)
+                    destination.has(photo.ref(), false);
+                const originals = source.Photos()?.remote_list() ?? [];
+                for (const photo of originals) {
+                    const data = photo.val();
+                    if (!data)
+                        continue;
+                    const bin = destination.remote_make({});
+                    bin.val(new Uint8Array(data));
+                }
+            }
+            share_grant() {
+                let profile = this.own_profile();
+                if (!profile)
+                    return;
+                if (profile.land().encrypted()) {
+                    profile = this.ensure_public_profile() ?? profile;
+                }
+                profile.land().give(null, $hyoo_crus_rank_read);
             }
             Share_button() {
                 if (!this.can_edit())
@@ -18262,6 +18316,9 @@ var $;
         __decorate([
             $mol_mem
         ], $bog_lk.prototype, "share_link", null);
+        __decorate([
+            $mol_action
+        ], $bog_lk.prototype, "ensure_public_profile", null);
         __decorate([
             $mol_action
         ], $bog_lk.prototype, "share_grant", null);

@@ -5747,6 +5747,11 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    export const $bog_lk_profile_preset: {
+        readonly '': number & {
+            $hyoo_crus_rank: number;
+        };
+    };
     const $bog_lk_profile_base: Omit<typeof $hyoo_crus_entity, "prototype"> & (new (...args: any[]) => $mol_type_override<$hyoo_crus_entity, {
         readonly FullName: (auto?: any) => $hyoo_crus_text | null;
         readonly Nickname: (auto?: any) => $hyoo_crus_text | null;
@@ -8347,6 +8352,10 @@ declare namespace $.$$ {
         username_preview_text(): string;
         bio_preview_text(): string;
         share_link(): string;
+        ensure_public_profile(): $bog_lk_profile | null;
+        protected copy_profile_data(source: $bog_lk_profile, target: $bog_lk_profile): void;
+        protected copy_profile_texts(source: $bog_lk_profile, target: $bog_lk_profile): void;
+        protected copy_profile_photos(source: $bog_lk_profile, target: $bog_lk_profile): void;
         share_grant(): void;
         Share_button(): any;
     }
