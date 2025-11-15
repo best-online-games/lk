@@ -5863,6 +5863,54 @@ declare namespace $ {
             [Symbol.toStringTag]: string;
             [$mol_ambient_ref]: $;
         } | null;
+        readonly PhotosBase64: (auto?: any) => {
+            remote_list(next?: readonly $hyoo_crus_atom_str[] | undefined): readonly $hyoo_crus_atom_str[];
+            remote_add(item: $hyoo_crus_atom_str): void;
+            make(config: null | number | $hyoo_crus_rank_preset | $hyoo_crus_land): $hyoo_crus_atom_str;
+            remote_make(config: $hyoo_crus_rank_preset): $hyoo_crus_atom_str;
+            local_make(idea?: number): $hyoo_crus_atom_str;
+            items(next?: readonly ((symbol & {
+                $hyoo_crus_ref: symbol;
+            }) | null)[] | undefined): readonly ((symbol & {
+                $hyoo_crus_ref: symbol;
+            }) | null)[];
+            items_vary(next?: readonly $hyoo_crus_vary_type[], tag?: keyof typeof $hyoo_crus_sand_tag): readonly $hyoo_crus_vary_type[];
+            splice(next: readonly $hyoo_crus_vary_type[], from?: number, to?: number, tag?: keyof typeof $hyoo_crus_sand_tag): void;
+            find(vary: $hyoo_crus_vary_type): $hyoo_crus_sand | null;
+            has(vary: $hyoo_crus_vary_type, next?: boolean, tag?: keyof typeof $hyoo_crus_sand_tag): boolean;
+            add(vary: $hyoo_crus_vary_type, tag?: keyof typeof $hyoo_crus_sand_tag): void;
+            cut(vary: $hyoo_crus_vary_type): void;
+            move(from: number, to: number): void;
+            wipe(seat: number): void;
+            node_make<Node_1 extends typeof $hyoo_crus_node>(Node: Node_1, vary: $hyoo_crus_vary_type, tag?: keyof typeof $hyoo_crus_sand_tag): InstanceType<Node_1>;
+            [$mol_dev_format_head](): any[];
+            land(): $hyoo_crus_land;
+            head(): string;
+            land_ref(): symbol & {
+                $hyoo_crus_ref: symbol;
+            };
+            ref(): symbol & {
+                $hyoo_crus_ref: symbol;
+            };
+            toJSON(): string | undefined;
+            cast<Node_1 extends typeof $hyoo_crus_node>(Node: Node_1): InstanceType<Node_1>;
+            nodes<Node_1 extends typeof $hyoo_crus_node>(Node: Node_1 | null): readonly InstanceType<Node_1>[];
+            units(): $hyoo_crus_sand[];
+            units_of(peer: string | null): $hyoo_crus_sand[];
+            filled(): boolean;
+            can_change(): boolean;
+            last_change(): $mol_time_moment | null;
+            author_peers(): string[];
+            author_lords(): (symbol & {
+                $hyoo_crus_ref: symbol;
+            })[];
+            get $(): $;
+            set $(next: $);
+            destructor(): void;
+            toString(): string;
+            [Symbol.toStringTag]: string;
+            [$mol_ambient_ref]: $;
+        } | null;
     }>) & {
         schema: {
             [x: string]: typeof $hyoo_crus_node;
@@ -5884,6 +5932,66 @@ declare namespace $ {
                     make(config: null | number | $hyoo_crus_rank_preset | $hyoo_crus_land): $hyoo_crus_atom_bin;
                     remote_make(config: $hyoo_crus_rank_preset): $hyoo_crus_atom_bin;
                     local_make(idea?: number): $hyoo_crus_atom_bin;
+                    items(next?: readonly ((symbol & {
+                        $hyoo_crus_ref: symbol;
+                    }) | null)[] | undefined): readonly ((symbol & {
+                        $hyoo_crus_ref: symbol;
+                    }) | null)[];
+                    items_vary(next?: readonly $hyoo_crus_vary_type[], tag?: keyof typeof $hyoo_crus_sand_tag): readonly $hyoo_crus_vary_type[];
+                    splice(next: readonly $hyoo_crus_vary_type[], from?: number, to?: number, tag?: keyof typeof $hyoo_crus_sand_tag): void;
+                    find(vary: $hyoo_crus_vary_type): $hyoo_crus_sand | null;
+                    has(vary: $hyoo_crus_vary_type, next?: boolean, tag?: keyof typeof $hyoo_crus_sand_tag): boolean;
+                    add(vary: $hyoo_crus_vary_type, tag?: keyof typeof $hyoo_crus_sand_tag): void;
+                    cut(vary: $hyoo_crus_vary_type): void;
+                    move(from: number, to: number): void;
+                    wipe(seat: number): void;
+                    node_make<Node_1 extends typeof $hyoo_crus_node>(Node: Node_1, vary: $hyoo_crus_vary_type, tag?: keyof typeof $hyoo_crus_sand_tag): InstanceType<Node_1>;
+                    [$mol_dev_format_head](): any[];
+                    land(): $hyoo_crus_land;
+                    head(): string;
+                    land_ref(): symbol & {
+                        $hyoo_crus_ref: symbol;
+                    };
+                    ref(): symbol & {
+                        $hyoo_crus_ref: symbol;
+                    };
+                    toJSON(): string | undefined;
+                    cast<Node_1 extends typeof $hyoo_crus_node>(Node: Node_1): InstanceType<Node_1>;
+                    nodes<Node_1 extends typeof $hyoo_crus_node>(Node: Node_1 | null): readonly InstanceType<Node_1>[];
+                    units(): $hyoo_crus_sand[];
+                    units_of(peer: string | null): $hyoo_crus_sand[];
+                    filled(): boolean;
+                    can_change(): boolean;
+                    last_change(): $mol_time_moment | null;
+                    author_peers(): string[];
+                    author_lords(): (symbol & {
+                        $hyoo_crus_ref: symbol;
+                    })[];
+                    get $(): $;
+                    set $(next: $);
+                    destructor(): void;
+                    toString(): string;
+                    [Symbol.toStringTag]: string;
+                    [$mol_ambient_ref]: $;
+                };
+                Value: Value;
+                toString(): any;
+                parse: typeof $hyoo_crus_vary_cast_ref;
+                tag: keyof typeof $hyoo_crus_sand_tag;
+                make<This extends typeof $mol_object>(this: This, config: Partial<InstanceType<This>>): InstanceType<This>;
+                $: $;
+                create<Instance>(this: new (init?: (instance: any) => void) => Instance, init?: (instance: $mol_type_writable<Instance>) => void): Instance;
+                toJSON(): any;
+                destructor(): void;
+                [Symbol.toPrimitive](): any;
+            };
+            readonly PhotosBase64: {
+                new (): {
+                    remote_list(next?: readonly $hyoo_crus_atom_str[] | undefined): readonly $hyoo_crus_atom_str[];
+                    remote_add(item: $hyoo_crus_atom_str): void;
+                    make(config: null | number | $hyoo_crus_rank_preset | $hyoo_crus_land): $hyoo_crus_atom_str;
+                    remote_make(config: $hyoo_crus_rank_preset): $hyoo_crus_atom_str;
+                    local_make(idea?: number): $hyoo_crus_atom_str;
                     items(next?: readonly ((symbol & {
                         $hyoo_crus_ref: symbol;
                     }) | null)[] | undefined): readonly ((symbol & {
@@ -5991,9 +6099,10 @@ declare namespace $.$$ {
         entity(next?: $bog_lk_profile | null): $bog_lk_profile | null;
         accept(): string;
         multiple(): boolean;
-        private_photo(): $hyoo_crus_atom_bin | null;
-        image_data(): Uint8Array<ArrayBuffer> | null;
-        protected to_data_uri(buffer: Uint8Array): string;
+        private_photo_base64(): $hyoo_crus_atom_str | null;
+        private_photo_binary(): $hyoo_crus_atom_bin | null;
+        protected encode_base64(buffer: Uint8Array): string;
+        image_data(): string | null;
         image_uri(): string;
         sub(): ($.$mol_button_open_native | $mol_image | $mol_icon_upload)[];
         Image(): $mol_image;
@@ -8460,9 +8569,10 @@ declare namespace $.$$ {
         username_preview_text(): string;
         bio_preview_text(): string;
         share_profile(): $bog_lk_profile | null;
+        available_profile(): $bog_lk_profile | null;
         share_link(): string;
         share_feedback_text(next?: string): string;
-        ensure_public_profile(): $bog_lk_profile | null;
+        ensure_public_profile(profile: $bog_lk_profile): $bog_lk_profile;
         protected copy_profile_data(source: $bog_lk_profile, target: $bog_lk_profile): void;
         protected copy_profile_texts(source: $bog_lk_profile, target: $bog_lk_profile): void;
         protected copy_profile_photos(source: $bog_lk_profile, target: $bog_lk_profile): void;
@@ -8474,6 +8584,7 @@ declare namespace $.$$ {
         protected share_copy_flow(): Promise<void>;
         protected share_copy_to_clipboard(link: string): Promise<boolean>;
         protected share_notify(message: string): void;
+        protected bytes_to_base64(buffer: Uint8Array): string;
         Avatar(): $.$bog_lk_avatar;
     }
 }

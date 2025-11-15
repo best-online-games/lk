@@ -13812,6 +13812,7 @@ var $;
         Github: $hyoo_crus_text,
         Twitter: $hyoo_crus_text,
         Photos: $hyoo_crus_list_ref_to(() => $hyoo_crus_atom_bin),
+        PhotosBase64: $hyoo_crus_list_ref_to(() => $hyoo_crus_atom_str),
     }) {
     }
     $.$bog_lk_profile = $bog_lk_profile;
@@ -13930,7 +13931,8 @@ var $;
     (function ($$) {
         class $bog_lk_avatar extends $.$bog_lk_avatar {
             avatar_log(event, detail = {}) {
-                this.$.$mol_dom_context.console?.info?.('[LK Avatar]', event, detail);
+                const payload = JSON.stringify(detail, null, 2);
+                this.$.$mol_dom_context.console?.info?.(`[LK Avatar] ${event}`, payload);
             }
             entity(next) {
                 if (next !== undefined) {
@@ -13951,41 +13953,76 @@ var $;
             multiple() {
                 return false;
             }
-            private_photo() {
+            private_photo_base64() {
+                const entity = this.entity();
+                if (!entity)
+                    return null;
+                const photos = entity.PhotosBase64()?.remote_list() ?? [];
+                if (photos.length) {
+                    this.avatar_log('Photos fetched (base64)', {
+                        profile: entity.ref().description,
+                        count: photos.length,
+                    });
+                }
+                return photos[0] ?? null;
+            }
+            private_photo_binary() {
                 const entity = this.entity();
                 if (!entity) {
                     this.avatar_log('No entity for avatar');
                     return null;
                 }
                 const photos = entity.Photos()?.remote_list() ?? [];
-                this.avatar_log('Photos fetched', {
-                    profile: entity.ref().description,
-                    count: photos.length,
-                });
+                if (photos.length) {
+                    this.avatar_log('Photos fetched (legacy)', {
+                        profile: entity.ref().description,
+                        count: photos.length,
+                    });
+                }
                 return photos[0] ?? null;
             }
-            image_data() {
-                const photo = this.private_photo();
-                if (!photo) {
-                    this.avatar_log('Photo record missing');
-                    return null;
-                }
-                const data = photo.val();
-                this.avatar_log('Photo data loaded', {
-                    ref: photo.ref().description,
-                    bytes: data?.byteLength ?? 0,
-                    has_data: Boolean(data),
-                });
-                return data ?? null;
-            }
-            to_data_uri(buffer) {
+            encode_base64(buffer) {
                 const chunk = 0x8000;
                 let binary = '';
                 for (let i = 0; i < buffer.length; i += chunk) {
                     const slice = buffer.subarray(i, i + chunk);
                     binary += String.fromCharCode(...slice);
                 }
-                return `data:image/*;base64,${this.$.$mol_dom_context.btoa(binary)}`;
+                return this.$.$mol_dom_context.btoa(binary);
+            }
+            image_data() {
+                const base64 = this.private_photo_base64();
+                if (base64) {
+                    const data = base64.val() ?? '';
+                    this.avatar_log('Photo data (base64) loaded', {
+                        ref: base64.ref().description,
+                        bytes: data.length * 3 / 4,
+                        has_data: Boolean(data),
+                    });
+                    return data || null;
+                }
+                const legacy = this.private_photo_binary();
+                if (!legacy) {
+                    this.avatar_log('Photo record missing');
+                    return null;
+                }
+                try {
+                    const bytes = legacy.val();
+                    const data = bytes ? this.encode_base64(bytes) : '';
+                    this.avatar_log('Photo data converted from legacy', {
+                        ref: legacy.ref().description,
+                        bytes: bytes?.byteLength ?? 0,
+                        has_data: Boolean(data),
+                    });
+                    return data || null;
+                }
+                catch (error) {
+                    this.avatar_log('Photo data failed', {
+                        ref: legacy.ref().description,
+                        error: error?.message ?? String(error),
+                    });
+                    return null;
+                }
             }
             image_uri() {
                 const data = this.image_data();
@@ -13994,9 +14031,9 @@ var $;
                     return '';
                 }
                 this.avatar_log('Image URI rendered', {
-                    bytes: data.byteLength,
+                    bytes: data.length * 3 / 4,
                 });
-                return this.to_data_uri(data);
+                return `data:image/*;base64,${data}`;
             }
             sub() {
                 const has_photo = !!this.image_data();
@@ -14018,10 +14055,14 @@ var $;
                 if (!this.enabled())
                     return;
                 const profile = this.entity();
-                const photo = this.private_photo();
-                if (!profile || !photo)
+                if (!profile)
                     return;
-                profile.Photos(null).has(photo.ref(), false);
+                const base64 = this.private_photo_base64();
+                if (base64)
+                    profile.PhotosBase64(null).has(base64.ref(), false);
+                const legacy = this.private_photo_binary();
+                if (legacy)
+                    profile.Photos(null).has(legacy.ref(), false);
             }
             files(next) {
                 if (!this.enabled())
@@ -14029,14 +14070,17 @@ var $;
                 if (!next?.length)
                     return [];
                 const profile = this.entity();
-                const list = profile.Photos(null);
-                const current = profile.Photos()?.remote_list() ?? [];
-                for (const photo of current)
-                    list.has(photo.ref(), false);
+                const base64_list = profile.PhotosBase64(null);
+                const base64_current = profile.PhotosBase64()?.remote_list() ?? [];
+                for (const photo of base64_current)
+                    base64_list.has(photo.ref(), false);
+                const legacy_current = profile.Photos()?.remote_list() ?? [];
+                for (const photo of legacy_current)
+                    profile.Photos(null).has(photo.ref(), false);
                 const file = next[0];
                 const buffer = new Uint8Array(this.$.$mol_wire_sync(file).arrayBuffer());
-                const bin = list.remote_make({});
-                bin.val(buffer);
+                const node = base64_list.local_make();
+                node.val(this.encode_base64(buffer));
                 return [];
             }
         }
@@ -14045,7 +14089,10 @@ var $;
         ], $bog_lk_avatar.prototype, "entity", null);
         __decorate([
             $mol_mem
-        ], $bog_lk_avatar.prototype, "private_photo", null);
+        ], $bog_lk_avatar.prototype, "private_photo_base64", null);
+        __decorate([
+            $mol_mem
+        ], $bog_lk_avatar.prototype, "private_photo_binary", null);
         __decorate([
             $mol_mem
         ], $bog_lk_avatar.prototype, "image_data", null);
@@ -18216,7 +18263,7 @@ var $;
                 return !this.share_ref();
             }
             own_profile() {
-                return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, $bog_lk_profile_preset);
+                return this.available_profile();
             }
             profile() {
                 const ref = this.share_ref();
@@ -18286,11 +18333,19 @@ var $;
             share_profile() {
                 if (!this.can_edit())
                     return null;
-                const profile = this.share_grant();
+                const profile = this.available_profile();
                 this.$.$mol_dom_context.console?.info?.('[LK Share]', 'share_profile', {
                     ref: profile?.ref().description ?? null,
                 });
                 return profile;
+            }
+            available_profile() {
+                const profile = this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, $bog_lk_profile_preset);
+                if (!profile)
+                    return null;
+                if (!this.can_edit())
+                    return profile;
+                return this.ensure_public_profile(profile);
             }
             share_link() {
                 if (!this.can_edit())
@@ -18304,10 +18359,7 @@ var $;
             share_feedback_text(next) {
                 return next ?? '';
             }
-            ensure_public_profile() {
-                const profile = this.own_profile();
-                if (!profile)
-                    return null;
+            ensure_public_profile(profile) {
                 const land = profile.land();
                 if (!land.encrypted()) {
                     this.$.$mol_dom_context.console?.info?.('[LK Share]', 'profile not encrypted', {
@@ -18345,40 +18397,52 @@ var $;
                 target.Twitter(null)?.text(source.Twitter(null)?.text() ?? '');
             }
             copy_profile_photos(source, target) {
-                const destination = target.Photos(null);
-                if (!destination)
+                const base64_dest = target.PhotosBase64(null);
+                for (const existing of target.PhotosBase64()?.remote_list() ?? []) {
+                    base64_dest.has(existing.ref(), false);
+                }
+                const legacy_dest = target.Photos(null);
+                for (const legacy of target.Photos()?.remote_list() ?? []) {
+                    legacy_dest?.has(legacy.ref(), false);
+                }
+                const logger = this.$.$mol_dom_context.console;
+                const base64_sources = source.PhotosBase64()?.remote_list() ?? [];
+                const legacy_sources = source.Photos()?.remote_list() ?? [];
+                if (base64_sources.length) {
+                    for (const photo of base64_sources) {
+                        const text = photo.val() ?? '';
+                        if (!text)
+                            continue;
+                        logger?.info?.('[LK Share]', 'Copy profile photo (base64)', {
+                            source: photo.ref().description,
+                            length: text.length,
+                        });
+                        const node = base64_dest.local_make();
+                        node.val(text);
+                    }
                     return;
-                const existing = destination.remote_list();
-                for (const photo of existing)
-                    destination.has(photo.ref(), false);
-                const originals = source.Photos()?.remote_list() ?? [];
-                for (const photo of originals) {
+                }
+                for (const photo of legacy_sources) {
                     const data = photo.val();
-                    const logger = this.$.$mol_dom_context.console;
                     if (!data) {
                         logger?.info?.('[LK Share]', 'Empty photo payload', {
                             source: photo.ref().description,
                         });
                         continue;
                     }
-                    logger?.info?.('[LK Share]', 'Copy profile photo', {
+                    const base64 = this.bytes_to_base64(data);
+                    logger?.info?.('[LK Share]', 'Copy profile photo (legacy)', {
                         source: photo.ref().description,
                         bytes: data.byteLength,
                     });
-                    const bin = destination.local_make();
-                    logger?.info?.('[LK Share]', 'Create public photo', {
-                        target: bin.ref().description,
-                    });
-                    bin.val(new Uint8Array(data));
+                    const node = base64_dest.local_make();
+                    node.val(base64);
                 }
             }
             share_grant() {
-                let profile = this.own_profile();
+                const profile = this.own_profile();
                 if (!profile)
                     return null;
-                if (profile.land().encrypted()) {
-                    profile = this.ensure_public_profile() ?? profile;
-                }
                 profile.land().give(null, $hyoo_crus_rank_read);
                 return profile;
             }
@@ -18431,6 +18495,15 @@ var $;
                     this.share_feedback_text('');
                     this.share_feedback_timer = null;
                 });
+            }
+            bytes_to_base64(buffer) {
+                const chunk = 0x8000;
+                let binary = '';
+                for (let i = 0; i < buffer.length; i += chunk) {
+                    const slice = buffer.subarray(i, i + chunk);
+                    binary += String.fromCharCode(...slice);
+                }
+                return this.$.$mol_dom_context.btoa(binary);
             }
             Avatar() {
                 const avatar = super.Avatar();
@@ -18504,6 +18577,9 @@ var $;
         __decorate([
             $mol_mem
         ], $bog_lk.prototype, "share_profile", null);
+        __decorate([
+            $mol_mem
+        ], $bog_lk.prototype, "available_profile", null);
         __decorate([
             $mol_mem
         ], $bog_lk.prototype, "share_link", null);
