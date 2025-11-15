@@ -123,7 +123,11 @@ namespace $.$$ {
 		@$mol_mem
 		share_profile() {
 			if (!this.can_edit()) return null
-			return this.share_grant()
+			const profile = this.share_grant()
+			this.$.$mol_dom_context.console?.info?.('[LK Share]', 'share_profile', {
+				ref: profile?.ref().description ?? null,
+			})
+			return profile
 		}
 
 		@$mol_mem
@@ -131,6 +135,7 @@ namespace $.$$ {
 			if (!this.can_edit()) return ''
 			const ref = this.share_profile()?.ref().description
 			if (!ref) return ''
+			this.$.$mol_dom_context.console?.info?.('[LK Share]', 'share_link', { ref })
 			return this.$.$mol_state_arg.make_link({ profile: ref })
 		}
 
@@ -141,19 +146,27 @@ namespace $.$$ {
 
 		@$mol_action
 		ensure_public_profile() {
-			const profile = this.own_profile()
-			if (!profile) return null
-			const land = profile.land()
-			if (!land.encrypted()) return profile
+				const profile = this.own_profile()
+				if (!profile) return null
+				const land = profile.land()
+				if (!land.encrypted()) {
+					this.$.$mol_dom_context.console?.info?.('[LK Share]', 'profile not encrypted', {
+						ref: profile.ref().description,
+					})
+					return profile
+				}
 
 			const hall = this.$.$hyoo_crus_glob.home().Hall(null)
 			if (!hall) return profile
 
-			const public_land = this.$.$hyoo_crus_glob.land_grab($bog_lk_profile_preset)
-			const public_profile = public_land.Data($bog_lk_profile)
-
-			this.copy_profile_data(profile, public_profile)
-			hall.remote(public_profile)
+				const public_land = this.$.$hyoo_crus_glob.land_grab($bog_lk_profile_preset)
+				const public_profile = public_land.Data($bog_lk_profile)
+				this.$.$mol_dom_context.console?.info?.('[LK Share]', 'migrate profile', {
+					from: profile.ref().description,
+					to: public_profile.ref().description,
+				})
+				this.copy_profile_data(profile, public_profile)
+				hall.remote(public_profile)
 
 			return public_profile
 		}
@@ -197,6 +210,9 @@ namespace $.$$ {
 					bytes: data.byteLength,
 				})
 				const bin = destination.local_make()
+				logger?.info?.('[LK Share]', 'Create public photo', {
+					target: bin.ref().description,
+				})
 				bin.val(new Uint8Array(data))
 			}
 		}
@@ -265,6 +281,21 @@ namespace $.$$ {
 				this.share_feedback_text('')
 				this.share_feedback_timer = null
 			})
+		}
+
+		Avatar() {
+			const avatar = super.Avatar()
+			avatar.entity = () => {
+				const shared = this.share_profile()
+				const entity = shared ?? this.profile()
+				this.$.$mol_dom_context.console?.info?.('[LK Avatar]', 'Avatar entity selected', {
+					can_edit: this.can_edit(),
+					shared: shared?.ref().description ?? null,
+					entity: entity?.ref().description ?? null,
+				})
+				return entity
+			}
+			return avatar
 		}
 	}
 }
