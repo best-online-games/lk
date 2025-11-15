@@ -263,6 +263,7 @@ $mol_button_open_native $mol_view
 		change?next <=> picked?next null
 
 $bog_lk_avatar $mol_button_open
+	entity null
 
 $mol_image $mol_view
 	dom_name \img
@@ -824,23 +825,32 @@ $bog_lk $mol_page
 	head /
 		<= Lights $bog_theme_toggle
 			theme_auto <= Theme
+	profile null
+	can_edit? true
 	body /
 		<= Hero $mol_row
 			sub /
 				<= Avatar $bog_lk_avatar
-				<= Hero_info $mol_list
-					rows /
-						<= Display_name $mol_text
-							text <= display_name_text \
-						<= Username_preview $mol_text
-							text <= username_preview_text \
-						<= Peer_id $mol_labeler
-							Label <= Peer_label $mol_text
-								text @ \User ID
-							Content <= Peer_value $mol_text
-								text <= peer_id \
-						<= Bio_preview $mol_text
-							text <= bio_preview_text \
+					entity <= profile
+					enabled <= can_edit
+				<= Hero_meta $mol_row
+					sub /
+						<= Hero_info $mol_list
+							rows /
+								<= Display_name $mol_text
+									text <= display_name_text \
+								<= Username_preview $mol_text
+									text <= username_preview_text \
+								<= Peer_id $mol_labeler
+									Label <= Peer_label $mol_text
+										text @ \User ID
+									Content <= Peer_value $mol_text
+										text <= peer_id \
+								<= Bio_preview $mol_text
+									text <= bio_preview_text \
+						<= Share_button $mol_button_copy
+							title @ \Share profile
+							text <= share_link \
 		<= Form_title $mol_text
 			text @ \Tell people about yourself
 		<= Profile_form $mol_form

@@ -18,6 +18,7 @@
 	"$bog_lk_Nickname_field_name": "Имя пользователя",
 	"$bog_lk_Nickname_input_hint": "Ник или псевдоним",
 	"$bog_lk_Peer_label_text": "ID пользователя",
+	"$bog_lk_Share_button_title": "Поделиться ссылкой",
 	"$bog_lk_Telegram_field_name": "Telegram",
 	"$bog_lk_Telegram_input_hint": "@username или ссылка",
 	"$bog_lk_Twitter_field_name": "Twitter",

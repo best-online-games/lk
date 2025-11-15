@@ -7408,7 +7408,11 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$bog_lk_avatar) = class $bog_lk_avatar extends ($.$mol_button_open) {};
+	($.$bog_lk_avatar) = class $bog_lk_avatar extends ($.$mol_button_open) {
+		entity(){
+			return null;
+		}
+	};
 
 
 ;
@@ -13922,7 +13926,7 @@ var $;
     var $$;
     (function ($$) {
         class $bog_lk_avatar extends $.$bog_lk_avatar {
-            profile() {
+            entity() {
                 return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, {});
             }
             accept() {
@@ -13932,7 +13936,7 @@ var $;
                 return false;
             }
             private_photo() {
-                return this.profile()?.Photos()?.remote_list()[0] ?? null;
+                return this.entity()?.Photos()?.remote_list()[0] ?? null;
             }
             image_data() {
                 return this.private_photo()?.val() ?? null;
@@ -13969,16 +13973,20 @@ var $;
                 return $.$mol_icon_upload.make({});
             }
             clear() {
-                const profile = this.profile();
+                if (!this.enabled())
+                    return;
+                const profile = this.entity();
                 const photo = this.private_photo();
                 if (!profile || !photo)
                     return;
                 profile.Photos(null).has(photo.ref(), false);
             }
             files(next) {
+                if (!this.enabled())
+                    return [];
                 if (!next?.length)
                     return [];
-                const profile = this.profile();
+                const profile = this.entity();
                 const list = profile.Photos(null);
                 const current = profile.Photos()?.remote_list() ?? [];
                 for (const photo of current)
@@ -13992,7 +14000,7 @@ var $;
         }
         __decorate([
             $mol_mem
-        ], $bog_lk_avatar.prototype, "profile", null);
+        ], $bog_lk_avatar.prototype, "entity", null);
         __decorate([
             $mol_mem
         ], $bog_lk_avatar.prototype, "private_photo", null);
@@ -17706,6 +17714,8 @@ var $;
 		}
 		Avatar(){
 			const obj = new this.$.$bog_lk_avatar();
+			(obj.entity) = () => ((this.profile()));
+			(obj.enabled) = () => ((this.can_edit()));
 			return obj;
 		}
 		display_name_text(){
@@ -17761,9 +17771,23 @@ var $;
 			]);
 			return obj;
 		}
+		share_link(){
+			return "";
+		}
+		Share_button(){
+			const obj = new this.$.$mol_button_copy();
+			(obj.title) = () => ((this.$.$mol_locale.text("$bog_lk_Share_button_title")));
+			(obj.text) = () => ((this.share_link()));
+			return obj;
+		}
+		Hero_meta(){
+			const obj = new this.$.$mol_row();
+			(obj.sub) = () => ([(this.Hero_info()), (this.Share_button())]);
+			return obj;
+		}
 		Hero(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this.Avatar()), (this.Hero_info())]);
+			(obj.sub) = () => ([(this.Avatar()), (this.Hero_meta())]);
 			return obj;
 		}
 		Form_title(){
@@ -17992,6 +18016,13 @@ var $;
 		head(){
 			return [(this.Lights())];
 		}
+		profile(){
+			return null;
+		}
+		can_edit(next){
+			if(next !== undefined) return next;
+			return true;
+		}
 		body(){
 			return [
 				(this.Hero()), 
@@ -18010,6 +18041,8 @@ var $;
 	($mol_mem(($.$bog_lk.prototype), "Peer_id"));
 	($mol_mem(($.$bog_lk.prototype), "Bio_preview"));
 	($mol_mem(($.$bog_lk.prototype), "Hero_info"));
+	($mol_mem(($.$bog_lk.prototype), "Share_button"));
+	($mol_mem(($.$bog_lk.prototype), "Hero_meta"));
 	($mol_mem(($.$bog_lk.prototype), "Hero"));
 	($mol_mem(($.$bog_lk.prototype), "Form_title"));
 	($mol_mem(($.$bog_lk.prototype), "Basics_heading"));
@@ -18049,6 +18082,7 @@ var $;
 	($mol_mem(($.$bog_lk.prototype), "Twitter_field"));
 	($mol_mem(($.$bog_lk.prototype), "Contacts_group"));
 	($mol_mem(($.$bog_lk.prototype), "Profile_form"));
+	($mol_mem(($.$bog_lk.prototype), "can_edit"));
 
 
 ;
@@ -18085,15 +18119,33 @@ var $;
             $hyoo_crus_glob.yard().sync();
         });
         class $bog_lk extends $.$bog_lk {
-            profile() {
+            share_ref() {
+                return this.$.$mol_state_arg.value('profile');
+            }
+            can_edit() {
+                return !this.share_ref();
+            }
+            own_profile() {
                 return this.$.$hyoo_crus_glob.home().hall_by($bog_lk_profile, {});
+            }
+            profile() {
+                const ref = this.share_ref();
+                if (ref) {
+                    return this.$.$hyoo_crus_glob.Node($hyoo_crus_ref(ref), $bog_lk_profile);
+                }
+                return this.own_profile();
             }
             profile_text(ensure, next) {
                 const profile = this.profile();
                 const atom = profile ? ensure(profile) : null;
                 if (!atom)
                     return '';
-                return atom.text(next);
+                if (next !== undefined) {
+                    if (!this.can_edit())
+                        return atom.text();
+                    return atom.text(next);
+                }
+                return atom.text();
             }
             full_name(next) {
                 return this.profile_text(profile => profile.FullName(null), next);
@@ -18126,7 +18178,7 @@ var $;
                 return this.profile_text(profile => profile.Twitter(null), next);
             }
             peer_id() {
-                return this.$.$hyoo_crus_glob.home().land().auth().peer();
+                return this.profile()?.ref().description ?? this.$.$hyoo_crus_glob.home().land().auth().peer();
             }
             display_name_text() {
                 return this.full_name().trim() || this.nickname().trim() || '—';
@@ -18141,7 +18193,36 @@ var $;
                     return bio;
                 return `${bio.slice(0, 177)}...`;
             }
+            share_link() {
+                if (!this.can_edit())
+                    return '';
+                const ref = this.own_profile()?.ref().description;
+                if (!ref)
+                    return '';
+                this.share_grant();
+                return this.$.$mol_state_arg.make_link({ profile: ref });
+            }
+            share_grant() {
+                const land = this.own_profile()?.land();
+                if (!land)
+                    return;
+                land.give(null, $hyoo_crus_rank_read);
+            }
+            Share_button() {
+                if (!this.can_edit())
+                    return null;
+                return super.Share_button();
+            }
         }
+        __decorate([
+            $mol_mem
+        ], $bog_lk.prototype, "share_ref", null);
+        __decorate([
+            $mol_mem
+        ], $bog_lk.prototype, "can_edit", null);
+        __decorate([
+            $mol_mem
+        ], $bog_lk.prototype, "own_profile", null);
         __decorate([
             $mol_mem
         ], $bog_lk.prototype, "profile", null);
@@ -18187,6 +18268,12 @@ var $;
         __decorate([
             $mol_mem
         ], $bog_lk.prototype, "bio_preview_text", null);
+        __decorate([
+            $mol_mem
+        ], $bog_lk.prototype, "share_link", null);
+        __decorate([
+            $mol_action
+        ], $bog_lk.prototype, "share_grant", null);
         $$.$bog_lk = $bog_lk;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -18209,6 +18296,14 @@ var $;
                 gap: $mol_gap.block,
                 alignItems: 'center',
             },
+            Hero_meta: {
+                gap: $mol_gap.block,
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                flex: {
+                    grow: 1,
+                },
+            },
             Hero_info: {
                 gap: $mol_gap.text,
             },
@@ -18224,6 +18319,9 @@ var $;
             Bio_preview: {
                 color: $mol_theme.text,
                 whiteSpace: 'pre-wrap',
+            },
+            Share_button: {
+                alignSelf: 'flex-start',
             },
             Form_title: {
                 margin: { bottom: $mol_gap.block },
