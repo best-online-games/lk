@@ -154,7 +154,12 @@ namespace $.$$ {
 			const ref = this.share_profile()?.ref().description
 			if (!ref) return ''
 			this.$.$mol_dom_context.console?.info?.('[LK Share]', 'share_link', { ref })
-			return this.$.$mol_state_arg.make_link({ profile: ref })
+			const args: Record<string, string> = {
+				profile: ref,
+			}
+			const spread = this.$.$mol_state_arg.value('') || 'lk'
+			args[''] = spread
+			return this.$.$mol_state_arg.make_link(args)
 		}
 
 		@$mol_mem
