@@ -18423,7 +18423,12 @@ var $;
                 if (!ref)
                     return '';
                 this.$.$mol_dom_context.console?.info?.('[LK Share]', 'share_link', { ref });
-                return this.$.$mol_state_arg.make_link({ profile: ref });
+                const args = {
+                    profile: ref,
+                };
+                const spread = this.$.$mol_state_arg.value('') || 'lk';
+                args[''] = spread;
+                return this.$.$mol_state_arg.make_link(args);
             }
             share_feedback_text(next) {
                 return next ?? '';
