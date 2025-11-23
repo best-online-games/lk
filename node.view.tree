@@ -242,46 +242,6 @@ $bog_theme_toggle $mol_pop
 			theme_auto <= theme_auto
 			close? <=> picker_close? null
 
-$mol_icon_upload $mol_icon path \M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z
-
-$mol_button_open $mol_button_minor
-	sub /
-		<= Icon $mol_icon_upload
-		<= Native $mol_button_open_native
-			files? <=> files_handled? <=> files? /File
-			accept <= accept \
-			multiple <= multiple true
-
-$mol_button_open_native $mol_view
-	dom_name \input
-	files? /File
-	attr *
-		type \file
-		accept <= accept \
-		multiple <= multiple true
-	event *
-		change?next <=> picked?next null
-
-$bog_lk_avatar $mol_button_open
-	entity null
-
-$mol_image $mol_view
-	dom_name \img
-	attr *any
-		^
-		src <= uri \
-		title <= hint
-		alt <= title \
-		loading <= loading \lazy
-		decoding <= decoding \async
-		crossOrigin <= cors null
-		width <= natural_width 0
-		height <= natural_height 0
-	event *any
-		load? <=> load? null
-	minimal_width 16
-	minimal_height 16
-
 $mol_paragraph $mol_view
 	line_height 24
 	letter_width 7
@@ -480,6 +440,23 @@ $mol_link $mol_view
 		^
 		click?event <=> click?event <=> event_click?event null
 
+$mol_image $mol_view
+	dom_name \img
+	attr *any
+		^
+		src <= uri \
+		title <= hint
+		alt <= title \
+		loading <= loading \lazy
+		decoding <= decoding \async
+		crossOrigin <= cors null
+		width <= natural_width 0
+		height <= natural_height 0
+	event *any
+		load? <=> load? null
+	minimal_width 16
+	minimal_height 16
+
 $mol_link_iconed $mol_link
 	sub /
 		<= Icon $mol_image
@@ -673,6 +650,29 @@ $mol_text_span $mol_paragraph
 		^
 		mol_text_type <= type \
 
+$mol_icon_upload $mol_icon path \M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z
+
+$mol_button_open $mol_button_minor
+	sub /
+		<= Icon $mol_icon_upload
+		<= Native $mol_button_open_native
+			files? <=> files_handled? <=> files? /File
+			accept <= accept \
+			multiple <= multiple true
+
+$mol_button_open_native $mol_view
+	dom_name \input
+	files? /File
+	attr *
+		type \file
+		accept <= accept \
+		multiple <= multiple true
+	event *
+		change?next <=> picked?next null
+
+$bog_lk_avatar $mol_button_open
+	entity null
+
 $mol_labeler $mol_list
 	rows /
 		<= Label $mol_view
@@ -828,6 +828,12 @@ $bog_lk $mol_page
 	profile null
 	can_edit? true
 	body /
+		<= Back $mol_button_minor
+			title @ \Вернуться
+			click? => back_click? \
+			sub /
+				<= Back_text $mol_text
+					text @ \Вернуться
 		<= Hero $mol_row
 			sub /
 				<= Avatar $bog_lk_avatar
