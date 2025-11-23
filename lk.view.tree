@@ -8,6 +8,12 @@ $bog_lk $mol_page
 	profile null
 	can_edit? true
 	body /
+		<= Back $mol_button_minor
+			title @ \Вернуться
+			click? => back_click? \
+			sub /
+				<= Back_text $mol_text
+					text @ \Вернуться
 		<= Hero $mol_row
 			sub /
 				<= Avatar $bog_lk_avatar

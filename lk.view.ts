@@ -17,6 +17,19 @@ namespace $.$$ {
 			return !this.share_ref()
 		}
 
+		Back() {
+			if (!this.share_ref()) return null as any
+			const back = super.Back()
+			back.event_click = event => this.back_click(event)
+			return back
+		}
+
+		@$mol_action
+		back_click(event?: Event) {
+			event?.preventDefault()
+			this.$.$mol_state_arg.value('profile', null)
+		}
+
 		@$mol_mem
 		own_profile() {
 			return this.available_profile()
@@ -31,10 +44,7 @@ namespace $.$$ {
 			return this.own_profile()
 		}
 
-		protected profile_text(
-			ensure: (profile: $bog_lk_profile) => $hyoo_crus_text | null,
-			next?: string,
-		) {
+		protected profile_text(ensure: (profile: $bog_lk_profile) => $hyoo_crus_text | null, next?: string) {
 			const profile = this.profile()
 			const atom = profile ? ensure(profile) : null
 			if (!atom) return ''

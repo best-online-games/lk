@@ -28,5 +28,7 @@
 	"$bog_lk_Share_button_title": "Поделиться ссылкой",
 	"$bog_lk_Share_title_text": "Поделиться",
 	"$bog_lk_Share_field_hint": "Ссылка на профиль",
-	"$bog_lk_Share_copy_text_text": "Скопировать"
+	"$bog_lk_Share_copy_text_text": "Скопировать",
+	"$bog_lk_Back_title": "Вернуться",
+	"$bog_lk_Back_text_text": "Вернуться"
 }
