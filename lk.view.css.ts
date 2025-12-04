@@ -1,10 +1,11 @@
 namespace $.$$ {
 	$mol_style_define($bog_lk, {
 		maxWidth: '50rem',
-			margin: {
-				left: 'auto',
-				right: 'auto',
-			},
+
+		margin: {
+			left: 'auto',
+			right: 'auto',
+		},
 		padding: $mol_gap.block,
 		gap: $mol_gap.block,
 
@@ -72,8 +73,8 @@ namespace $.$$ {
 			font: { weight: 600 },
 			margin: { top: $mol_gap.block },
 		},
-		Share_field :{
-			width:'33rem'
-		}
+		Share_field: {
+			width: '33rem',
+		},
 	})
 }
