@@ -18752,8 +18752,8 @@ var $;
                 margin: { top: $mol_gap.block },
             },
             Share_field: {
-                width: '33rem'
-            }
+                width: '33rem',
+            },
         });
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
